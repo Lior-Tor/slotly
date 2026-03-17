@@ -69,11 +69,23 @@ export const getSlots = async (req, res) => {
   const startMinutes = startHour * 60 + startMin;
   const endMinutes = endHour * 60 + endMin;
 
+  // Filter out past slots if the requested date is today.
+  // Round up to the next slot boundary
+  // e.g. if now is 12:10 and duration is 30min, start at 12:30.
+  const now = new Date();
+  const todayUTC = now.toISOString().slice(0, 10); // "YYYY-MM-DD" in UTC
+  const nowMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const effectiveStartMinutes =
+    date === todayUTC
+      ? Math.ceil(nowMinutes / duration) * duration // round up to next slot boundary
+      : startMinutes;
+  const adjustedStartMinutes = Math.max(startMinutes, effectiveStartMinutes);
+
   const candidates = []; // Each entry: { start: Date, end: Date }
 
   // Step by duration each iteration — ensures no slot runs past the availability window
   // e.g. 30min event, 09:00–17:00 → 540, 570, 600 … 990 (min=990+30=1020 → stops)
-  for (let min = startMinutes; min + duration <= endMinutes; min += duration) {
+  for (let min = adjustedStartMinutes; min + duration <= endMinutes; min += duration) {
     const slotStart = new Date(`${date}T00:00:00.000Z`);
     // setUTCHours(0, min, 0, 0) sets hours=0, minutes=min, seconds=0, ms=0
     slotStart.setUTCHours(0, min, 0, 0);
