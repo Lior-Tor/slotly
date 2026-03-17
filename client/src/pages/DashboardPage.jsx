@@ -88,6 +88,7 @@ export default function DashboardPage() {
   // Table controls
   const [tab, setTab] = useState(0); // 0 = upcoming, 1 = past
   const [search, setSearch] = useState('');
+  const [searchEventType, setSearchEventType] = useState('');
   const [sortField, setSortField] = useState('start_time');
   const [sortDir, setSortDir] = useState('asc'); // upcoming sorted soonest first
 
@@ -154,14 +155,15 @@ export default function DashboardPage() {
   );
   const tabBookings = tab === 0 ? upcomingBookings : pastBookings;
 
-  // Search filters by guest name or email — case-insensitive
-  const searchedBookings = search
-    ? tabBookings.filter(
-        (b) =>
-          b.guest_name.toLowerCase().includes(search.toLowerCase()) ||
-          b.guest_email.toLowerCase().includes(search.toLowerCase())
-      )
-    : tabBookings;
+  // Search filters by guest name/email and/or event type title — case-insensitive
+  const searchedBookings = tabBookings.filter((b) => {
+    const matchesGuest = !search ||
+      b.guest_name.toLowerCase().includes(search.toLowerCase()) ||
+      b.guest_email.toLowerCase().includes(search.toLowerCase());
+    const matchesEventType = !searchEventType ||
+      (b.event_types?.title || '').toLowerCase().includes(searchEventType.toLowerCase());
+    return matchesGuest && matchesEventType;
+  });
 
   // Spread into a new array before sorting — sort() mutates in place
   const sortedBookings = [...searchedBookings].sort((a, b) => {
@@ -326,7 +328,7 @@ export default function DashboardPage() {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 2 }}>
                   <Tabs
                     value={tab}
-                    onChange={(_, v) => { setTab(v); setSearch(''); setSortField('start_time'); setSortDir(v === 0 ? 'asc' : 'desc'); }}
+                    onChange={(_, v) => { setTab(v); setSearch(''); setSearchEventType(''); setSortField('start_time'); setSortDir(v === 0 ? 'asc' : 'desc'); }}
                     sx={{ minHeight: 40 }}
                   >
                     <Tab
@@ -339,20 +341,36 @@ export default function DashboardPage() {
                     />
                   </Tabs>
 
-                  <TextField
-                    size="small"
-                    placeholder="Rechercher un invité…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Search sx={{ fontSize: 18, color: 'text.secondary' }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{ width: 240 }}
-                  />
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <TextField
+                      size="small"
+                      placeholder="Rechercher un type d'évènement…"
+                      value={searchEventType}
+                      onChange={(e) => setSearchEventType(e.target.value)}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Search sx={{ fontSize: 18, color: 'text.secondary' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{ width: 240 }}
+                    />
+                    <TextField
+                      size="small"
+                      placeholder="Rechercher un invité…"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Search sx={{ fontSize: 18, color: 'text.secondary' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{ width: 240 }}
+                    />
+                  </Box>
                 </Box>
 
                 {sortedBookings.length === 0 ? (
