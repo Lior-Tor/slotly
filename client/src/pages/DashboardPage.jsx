@@ -376,7 +376,9 @@ export default function DashboardPage() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {sortedBookings.map((booking) => (
+                        {sortedBookings.map((booking) => {
+                          const isPast = new Date(booking.start_time) <= now;
+                          return (
                           <TableRow key={booking.id} hover>
                             {/* Date + heure début → fin */}
                             <TableCell sx={{ whiteSpace: 'nowrap' }}>
@@ -416,14 +418,14 @@ export default function DashboardPage() {
                             <TableCell>{booking.guest_email}</TableCell>
                             <TableCell>
                               <Chip
-                                label={booking.status === 'confirmed' ? 'Confirmé' : 'Annulé'}
-                                color={booking.status === 'confirmed' ? 'success' : 'default'}
+                                label={booking.status === 'cancelled' ? 'Annulé' : isPast ? 'Passé' : 'Confirmé'}
+                                color={booking.status === 'cancelled' ? 'default' : isPast ? 'default' : 'success'}
                                 size="small"
                               />
                             </TableCell>
                             <TableCell>
-                              {/* Cancel button only shown for confirmed bookings */}
-                              {booking.status === 'confirmed' && (
+                              {/* Cancel button only shown for upcoming confirmed bookings */}
+                              {booking.status === 'confirmed' && !isPast && (
                                 <Tooltip title="Annuler cette réservation">
                                   <IconButton
                                     size="small"
@@ -436,7 +438,8 @@ export default function DashboardPage() {
                               )}
                             </TableCell>
                           </TableRow>
-                        ))}
+                          );
+                        })}
                       </TableBody>
                     </Table>
                   </TableContainer>
