@@ -122,7 +122,7 @@ export default function Sidebar() {
           size="small"
           fullWidth
           onClick={handleLogout}
-          sx={{ borderColor: '#E5E7EB', color: 'text.secondary' }}
+          sx={{ borderColor: 'error.main', color: 'error.main' }}
         >
           Déconnexion
         </Button>
