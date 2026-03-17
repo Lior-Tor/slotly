@@ -38,6 +38,7 @@ import {
   Search,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { getBookings, cancelBooking } from '../api/bookingsApi';
 import { getEventTypes } from '../api/eventsApi';
 import { getProfile } from '../api/profilesApi';
@@ -401,7 +402,7 @@ export default function DashboardPage() {
                             {/* Date + heure début → fin */}
                             <TableCell sx={{ whiteSpace: 'nowrap' }}>
                               <Typography variant="body2">
-                                {format(new Date(booking.start_time), 'dd MMM yyyy')}
+                                {format(new Date(booking.start_time), 'dd MMM yyyy', { locale: fr })}
                               </Typography>
                               <Typography variant="body2" color="text.secondary">
                                 {formatUTC(booking.start_time)} → {formatUTC(booking.end_time)} UTC

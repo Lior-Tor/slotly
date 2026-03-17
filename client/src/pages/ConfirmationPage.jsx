@@ -11,6 +11,7 @@ import {
 import { keyframes } from '@mui/system';
 import { CheckCircleOutline, CalendarMonth } from '@mui/icons-material';
 import { format, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const popIn = keyframes`
   0%   { transform: scale(0.2); opacity: 0; }
@@ -43,7 +44,7 @@ export default function ConfirmationPage() {
 
   // Format date as "Monday, June 10, 2025"
   const formattedDate = date
-    ? format(parseISO(date), 'EEEE d MMMM yyyy')
+    ? format(parseISO(date), 'EEEE d MMMM yyyy', { locale: fr })
     : '';
 
   // Format time as "HH:mm UTC" — use UTC methods to avoid local timezone offset

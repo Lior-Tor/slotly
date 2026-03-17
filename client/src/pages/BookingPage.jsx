@@ -14,6 +14,7 @@ import {
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { ArrowBack, CalendarMonth } from '@mui/icons-material';
 import { format, isBefore, startOfDay, addMonths } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { getPublicEventTypes } from '../api/eventsApi';
 import { getPublicAvailability } from '../api/availabilityApi';
 import { getSlots, createBooking } from '../api/bookingsApi';
@@ -317,7 +318,7 @@ export default function BookingPage() {
                     Choisissez un créneau
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {selectedDate && format(selectedDate, 'EEEE d MMMM yyyy')}
+                    {selectedDate && format(selectedDate, 'EEEE d MMMM yyyy', { locale: fr })}
                   </Typography>
 
                   {loadingSlots ? (
@@ -350,7 +351,7 @@ export default function BookingPage() {
                       {selectedEventType?.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {selectedDate && format(selectedDate, 'EEEE d MMMM yyyy')} à{' '}
+                      {selectedDate && format(selectedDate, 'EEEE d MMMM yyyy', { locale: fr })} à{' '}
                       {/* getUTCHours/Minutes used here to display the slot in UTC, not local time */}
                       {selectedSlot && (() => { const d = new Date(selectedSlot); return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`; })()} UTC
                     </Typography>
